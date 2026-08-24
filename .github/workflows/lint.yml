@@ -16,25 +16,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+        run: pnpm install --no-frozen-lockfile
 
       - name: Run linter
         run: |
           if grep -q '"lint":' package.json 2>/dev/null; then
-            npm run lint
+            pnpm run lint
           else
             echo "No lint script found in package.json. Skipping linter."
           fi
@@ -42,7 +41,7 @@ jobs:
       - name: Check code formatting
         run: |
           if grep -q '"format:check":' package.json 2>/dev/null; then
-            npm run format:check
+            pnpm run format:check
           else
             echo "No format check script found in package.json. Skipping format check."
           fi

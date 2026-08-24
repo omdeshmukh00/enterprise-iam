@@ -18,17 +18,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+          cache: 'pnpm'
 
-      - name: Run npm audit
+      - name: Run dependency audit
         run: |
-          if [ -f package.json ]; then
-            npm audit --audit-level=high || echo "npm audit detected potential vulnerabilities."
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm audit --audit-level=high || echo "pnpm audit detected potential vulnerabilities."
           else
-            echo "No package.json found. Skipping npm audit."
+            npm audit --audit-level=high || echo "npm audit detected potential vulnerabilities."
           fi
 
   codeql:
@@ -43,6 +49,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install dependencies for build analysis
+        run: pnpm install --no-frozen-lockfile
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3

@@ -20,33 +20,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+        run: pnpm install --no-frozen-lockfile
 
       - name: Type check TypeScript
         run: |
-          if npx tsc --version > /dev/null 2>&1; then
-            npx tsc --noEmit
+          if grep -q '"typecheck":' package.json 2>/dev/null; then
+            pnpm run typecheck
           else
-            echo "tsc not found, skipping type check."
+            echo "No root typecheck script defined in package.json."
           fi
 
       - name: Build applications & packages
         run: |
           if grep -q '"build":' package.json 2>/dev/null; then
-            npm run build
+            pnpm run build
           else
             echo "No root build script defined in package.json. Skipping build step."
           fi
