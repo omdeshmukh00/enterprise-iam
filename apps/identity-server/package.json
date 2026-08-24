@@ -5,6 +5,9 @@
   "description": "IdentityHub Core Backend Identity Server",
   "main": "dist/server.js",
   "scripts": {
+    "postinstall": "prisma generate",
+    "prebuild": "prisma generate",
+    "pretypecheck": "prisma generate",
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
