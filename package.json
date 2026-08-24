@@ -1,0 +1,24 @@
+{
+  "name": "identityhub-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "IdentityHub - Enterprise Identity and Access Management (IAM) Platform",
+  "scripts": {
+    "dev": "pnpm --parallel dev",
+    "dev:backend": "pnpm --filter identity-server dev",
+    "dev:admin": "pnpm --filter admin-console dev",
+    "build": "pnpm --recursive run build",
+    "lint": "pnpm --recursive run lint",
+    "test": "pnpm --recursive run test",
+    "typecheck": "pnpm --recursive run typecheck",
+    "db:generate": "pnpm --filter identity-server db:generate",
+    "db:push": "pnpm --filter identity-server db:push"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
