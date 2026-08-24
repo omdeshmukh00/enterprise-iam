@@ -1,0 +1,52 @@
+name: Build & Type Check
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Type check TypeScript
+        run: |
+          if npx tsc --version > /dev/null 2>&1; then
+            npx tsc --noEmit
+          else
+            echo "tsc not found, skipping type check."
+          fi
+
+      - name: Build applications & packages
+        run: |
+          if grep -q '"build":' package.json 2>/dev/null; then
+            npm run build
+          else
+            echo "No root build script defined in package.json. Skipping build step."
+          fi

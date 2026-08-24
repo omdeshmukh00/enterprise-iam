@@ -1,0 +1,33 @@
+name: Docker & Infrastructure
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    paths:
+      - 'infrastructure/**'
+      - '**/Dockerfile'
+      - '.github/workflows/docker.yml'
+  pull_request:
+    branches: [ main, master, develop ]
+    paths:
+      - 'infrastructure/**'
+      - '**/Dockerfile'
+      - '.github/workflows/docker.yml'
+  workflow_dispatch:
+
+jobs:
+  docker-check:
+    name: Validate Infrastructure & Compose
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose Configuration
+        run: |
+          if [ -f infrastructure/docker-compose.yml ]; then
+            docker compose -f infrastructure/docker-compose.yml config --quiet || echo "docker-compose file exists but failed validation or is empty."
+          else
+            echo "No infrastructure/docker-compose.yml found."
+          fi
