@@ -1,6 +1,7 @@
 import app from './app.js';
 import { env } from './config/env.js';
 import { checkDatabaseConnection, prisma } from './config/database.js';
+import { ClientService } from './services/client.service.js';
 
 const server = app.listen(env.PORT, async () => {
   console.log(`===========================================`);
@@ -11,6 +12,15 @@ const server = app.listen(env.PORT, async () => {
   
   const isDbConnected = await checkDatabaseConnection();
   console.log(`🗄️ Database:    ${isDbConnected ? 'Connected (PostgreSQL)' : 'Disconnected (Pending connection)'}`);
+
+  if (isDbConnected) {
+    try {
+      await ClientService.ensureDefaultDevelopmentClients();
+      console.log('🛡️ OAuth Clients: Registered (Admin Console & CRM)');
+    } catch (err) {
+      console.error('Failed to initialize OAuth development clients:', err);
+    }
+  }
   console.log(`===========================================`);
 });
 

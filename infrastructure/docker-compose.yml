@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  identity-server:
+    build:
+      context: ..
+      dockerfile: infrastructure/docker/identity-server.Dockerfile
+    container_name: identityhub-server
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - APP_NAME=IdentityHub
+      - APP_VERSION=0.1.0
+      - APP_BASE_URL=http://localhost:5000
+      - DATABASE_URL=${DATABASE_URL}
+      - DIRECT_URL=${DIRECT_URL}
+      - ADMIN_CONSOLE_URL=http://localhost:3000
+      - CRM_APP_URL=http://localhost:3001
+      - CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003
+      - SESSION_COOKIE_NAME=identityhub_session
+      - SESSION_TTL_SECONDS=604800
+      - SESSION_IDLE_TIMEOUT_SECONDS=86400
+      - COOKIE_HTTP_ONLY=true
+      - COOKIE_SECURE=false
+      - COOKIE_SAME_SITE=lax
+      - ARGON2_MEMORY_COST=65536
+      - ARGON2_TIME_COST=3
+      - ARGON2_PARALLELISM=1
+      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_SECURE=${SMTP_SECURE:-false}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL}
+      - SMTP_FROM_NAME=IdentityHub
+      - EMAIL_VERIFICATION_URL=http://localhost:3000/verify-email
+      - PASSWORD_RESET_URL=http://localhost:3000/reset-password
+      - SECURITY_NOTIFICATION_URL=http://localhost:3000/security
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  admin-console:
+    build:
+      context: ..
+      dockerfile: infrastructure/docker/admin-console.Dockerfile
+    container_name: identityhub-admin-console
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_IDENTITY_SERVER_URL=http://localhost:5000
+    depends_on:
+      identity-server:
+        condition: service_healthy
+
+  crm:
+    build:
+      context: ..
+      dockerfile: infrastructure/docker/crm.Dockerfile
+    container_name: identityhub-crm
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_IDENTITY_SERVER_URL=http://localhost:5000
+      - NEXT_PUBLIC_IDENTITY_CONSOLE_URL=http://localhost:3000
+    depends_on:
+      identity-server:
+        condition: service_healthy

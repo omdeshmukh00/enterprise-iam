@@ -3,8 +3,19 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
 }
 
 model SystemHealth {
@@ -12,3 +23,192 @@ model SystemHealth {
   status    String   @default("ok")
   createdAt DateTime @default(now())
 }
+
+model User {
+  id              String      @id @default(uuid())
+  email           String      @unique
+  passwordHash    String
+  firstName       String
+  lastName        String
+  role            Role        @default(USER)
+  status          UserStatus  @default(ACTIVE)
+  emailVerified   Boolean     @default(false)
+  emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  sessions           Session[]
+  verificationTokens EmailVerificationToken[]
+  passwordResetTokens PasswordResetToken[]
+  auditLogs          AuditLog[]
+  oauthAuthorizationCodes OAuthAuthorizationCode[]
+  oauthConsents           OAuthConsent[]
+  oauthRefreshTokens      OAuthRefreshToken[]
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+  @@map("users")
+}
+
+model Session {
+  id           String    @id @default(uuid())
+  userId       String
+  tokenHash    String    @unique
+  expiresAt    DateTime
+  lastActiveAt DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+  revokedAt    DateTime?
+  ipAddress    String?
+  userAgent    String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  otpCode   String?
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("email_verification_tokens")
+}
+
+model LoginOtp {
+  id        String    @id @default(uuid())
+  email     String
+  codeHash  String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([email])
+  @@map("login_otps")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("password_reset_tokens")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  timestamp    DateTime @default(now())
+  actorUserId  String?
+  action       String
+  resourceType String
+  resourceId   String?
+  status       String
+  ipAddress    String?
+  userAgent    String?
+  metadata     Json?
+
+  actor User? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId])
+  @@index([action])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+model OAuthClient {
+  id               String       @id @default(uuid())
+  clientId         String       @unique
+  clientSecretHash String?
+  name             String
+  clientType       String       @default("PUBLIC")
+  redirectUris     String[]
+  allowedScopes    String[]
+  isActive         Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  authorizationCodes OAuthAuthorizationCode[]
+  consents           OAuthConsent[]
+  refreshTokens      OAuthRefreshToken[]
+
+  @@map("oauth_clients")
+}
+
+model OAuthAuthorizationCode {
+  id                  String       @id @default(uuid())
+  codeHash            String       @unique
+  clientId            String
+  userId              String
+  redirectUri         String
+  codeChallenge       String
+  codeChallengeMethod String       @default("S256")
+  scopes              String[]
+  nonce               String?
+  expiresAt           DateTime
+  usedAt              DateTime?
+  createdAt           DateTime     @default(now())
+
+  client              OAuthClient  @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  user                User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([userId])
+  @@map("oauth_authorization_codes")
+}
+
+model OAuthConsent {
+  id        String       @id @default(uuid())
+  userId    String
+  clientId  String
+  scopes    String[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  revokedAt DateTime?
+
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client    OAuthClient  @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+
+  @@unique([userId, clientId])
+  @@index([userId])
+  @@index([clientId])
+  @@map("oauth_consents")
+}
+
+model OAuthRefreshToken {
+  id                  String       @id @default(uuid())
+  tokenHash           String       @unique
+  clientId            String
+  userId              String
+  scopes              String[]
+  expiresAt           DateTime
+  revokedAt           DateTime?
+  replacedByTokenHash String?
+  createdAt           DateTime     @default(now())
+
+  client              OAuthClient  @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  user                User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([userId])
+  @@map("oauth_refresh_tokens")
+}
+

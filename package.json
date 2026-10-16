@@ -7,14 +7,17 @@
     "dev": "pnpm --parallel dev",
     "dev:backend": "pnpm --filter identity-server dev",
     "dev:admin": "pnpm --filter admin-console dev",
+    "dev:crm": "pnpm --filter crm-client dev",
     "build": "pnpm --recursive run build",
     "lint": "pnpm --recursive run lint",
     "test": "pnpm --recursive run test",
     "typecheck": "pnpm --recursive run typecheck",
     "db:generate": "pnpm --filter identity-server db:generate",
-    "db:push": "pnpm --filter identity-server db:push"
+    "db:push": "pnpm --filter identity-server db:push",
+    "seed:admin": "tsx scripts/seed-database.ts"
   },
   "devDependencies": {
+    "tsx": "^4.10.5",
     "typescript": "^5.4.5"
   },
   "engines": {
