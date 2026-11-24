@@ -8,6 +8,7 @@
     "dev:backend": "pnpm --filter identity-server dev",
     "dev:admin": "pnpm --filter admin-console dev",
     "dev:crm": "pnpm --filter crm-client dev",
+    "dev:analytics": "pnpm --filter analytics-client dev",
     "build": "pnpm --recursive run build",
     "lint": "pnpm --recursive run lint",
     "test": "pnpm --recursive run test",

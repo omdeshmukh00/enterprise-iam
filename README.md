@@ -57,6 +57,12 @@ IdentityHub is an Enterprise Identity and Access Management (IAM) platform built
   - Server-side callback route (`/api/auth/callback`) exchanges code and sets isolated `identityhub_crm_session`.
   - Local logout (`/api/auth/logout`) terminates CRM session without affecting central SSO.
 
+- **First-Party Client App: Analytics (`apps/client-apps/analytics`, port `3002`)**:
+  - Independent Next.js 14 client application for telemetry and identity observability.
+  - Integrated OAuth 2.0 / OIDC relying party with PKCE (`S256`) authorization flow.
+  - Server-side callback route (`/api/auth/callback`) maintains isolated `identityhub_analytics_session`.
+  - Real-time dashboards for SSO session activity, token issuance metrics, and risk telemetry.
+
 - **Automated Testing & Infrastructure**:
   - **59/59 automated tests passing across 8 test suites** (`100% pass rate`).
   - Integration tests for session isolation, SSO reuse, logout independence, OTP security, admin APIs, and OAuth 2.0 / OIDC.
@@ -89,7 +95,7 @@ enterprise-iam/
 │   ├── admin-console/           # Next.js User Portal & Admin Console (Port 3000)
 │   └── client-apps/
 │       ├── crm/                 # Next.js CRM client app (Port 3001)
-│       ├── analytics/           # Reserved client
+│       ├── analytics/           # Next.js Analytics client app (Port 3002)
 │       └── hr/                  # Reserved client
 ├── docs/
 │   ├── security/
@@ -100,7 +106,8 @@ enterprise-iam/
 │   ├── docker/
 │   │   ├── identity-server.Dockerfile
 │   │   ├── admin-console.Dockerfile
-│   │   └── crm.Dockerfile
+│   │   ├── crm.Dockerfile
+│   │   └── analytics.Dockerfile
 │   └── docker-compose.yml
 ├── packages/
 │   ├── logger/                  # Monorepo logging
@@ -204,6 +211,9 @@ pnpm dev:admin
 
 # Terminal 3: CRM Demonstration App (Port 3001)
 pnpm dev:crm
+
+# Terminal 4: Analytics Demonstration App (Port 3002)
+pnpm dev:analytics
 ```
 
 ---

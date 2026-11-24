@@ -151,6 +151,16 @@ export class ClientService {
         allowedScopes: ['openid', 'profile', 'email'],
         isActive: true,
       },
+      {
+        clientId: 'identityhub-analytics',
+        name: 'IdentityHub Analytics',
+        clientType: 'PUBLIC',
+        redirectUris: [
+          'http://localhost:3002/api/auth/callback',
+        ],
+        allowedScopes: ['openid', 'profile', 'email'],
+        isActive: true,
+      },
     ];
 
     for (const c of clients) {

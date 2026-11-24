@@ -16,7 +16,7 @@ const server = app.listen(env.PORT, async () => {
   if (isDbConnected) {
     try {
       await ClientService.ensureDefaultDevelopmentClients();
-      console.log('🛡️ OAuth Clients: Registered (Admin Console & CRM)');
+      console.log('🛡️ OAuth Clients: Registered (Admin Console, CRM & Analytics)');
     } catch (err) {
       console.error('Failed to initialize OAuth development clients:', err);
     }

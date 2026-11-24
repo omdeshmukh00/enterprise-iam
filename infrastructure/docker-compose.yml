@@ -75,3 +75,19 @@ services:
     depends_on:
       identity-server:
         condition: service_healthy
+
+  analytics:
+    build:
+      context: ..
+      dockerfile: infrastructure/docker/analytics.Dockerfile
+    container_name: identityhub-analytics
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_IDENTITY_SERVER_URL=http://localhost:5000
+      - NEXT_PUBLIC_IDENTITY_CONSOLE_URL=http://localhost:3000
+    depends_on:
+      identity-server:
+        condition: service_healthy

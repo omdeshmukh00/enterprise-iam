@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { api, AuditLogItem } from '../../../lib/api';
 import { FileText, CheckCircle2, XCircle, Loader2, Filter } from 'lucide-react';
 
@@ -10,7 +10,7 @@ export default function AdminAuditLogsPage() {
   const [actionFilter, setActionFilter] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  const loadLogs = async () => {
+  const loadLogs = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await api.admin.getAuditLogs({
@@ -24,11 +24,11 @@ export default function AdminAuditLogsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [actionFilter]);
 
   useEffect(() => {
     loadLogs();
-  }, [actionFilter]);
+  }, [loadLogs]);
 
   return (
     <div className="space-y-6">

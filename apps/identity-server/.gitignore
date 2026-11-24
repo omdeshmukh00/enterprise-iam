@@ -29,6 +29,8 @@ out/
 *.pem
 *.key
 *.crt
+.*-sessions.json
+*-sessions.json
 
 # Test Coverage
 coverage/

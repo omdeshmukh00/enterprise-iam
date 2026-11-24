@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api, User, SessionItem, AuditLogItem } from '../../../../lib/api';
@@ -32,7 +32,7 @@ export default function AdminUserDetailsPage() {
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
-  const loadUserDetails = async () => {
+  const loadUserDetails = useCallback(async () => {
     try {
       const data = await api.admin.getUserDetails(userId);
       setUser(data.user);
@@ -43,11 +43,11 @@ export default function AdminUserDetailsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     loadUserDetails();
-  }, [userId]);
+  }, [loadUserDetails]);
 
   const handleModalConfirm = async () => {
     if (!user || !modalAction) return;

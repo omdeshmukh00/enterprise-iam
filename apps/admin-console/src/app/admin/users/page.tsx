@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { api, User } from '../../../lib/api';
 import {
@@ -27,7 +27,7 @@ export default function AdminUsersPage() {
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await api.admin.listUsers({
@@ -41,11 +41,11 @@ export default function AdminUsersPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [search, statusFilter]);
 
   useEffect(() => {
     loadUsers();
-  }, [statusFilter]);
+  }, [loadUsers]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();

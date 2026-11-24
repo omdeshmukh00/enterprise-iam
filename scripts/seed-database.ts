@@ -70,6 +70,58 @@ async function seedAdmin() {
     },
   });
 
+  console.log('Seeding default OAuth clients...');
+  const clients = [
+    {
+      clientId: 'identityhub-admin-console',
+      name: 'IdentityHub Admin Console',
+      clientType: 'PUBLIC' as const,
+      redirectUris: [
+        'http://localhost:3000/api/auth/callback',
+        'http://localhost:3000/login',
+      ],
+      allowedScopes: ['openid', 'profile', 'email', 'admin'],
+      isActive: true,
+    },
+    {
+      clientId: 'identityhub-crm',
+      name: 'IdentityHub CRM',
+      clientType: 'PUBLIC' as const,
+      redirectUris: ['http://localhost:3001/api/auth/callback'],
+      allowedScopes: ['openid', 'profile', 'email'],
+      isActive: true,
+    },
+    {
+      clientId: 'identityhub-analytics',
+      name: 'IdentityHub Analytics',
+      clientType: 'PUBLIC' as const,
+      redirectUris: ['http://localhost:3002/api/auth/callback'],
+      allowedScopes: ['openid', 'profile', 'email'],
+      isActive: true,
+    },
+  ];
+
+  for (const c of clients) {
+    await prisma.oAuthClient.upsert({
+      where: { clientId: c.clientId },
+      update: {
+        name: c.name,
+        redirectUris: c.redirectUris,
+        allowedScopes: c.allowedScopes,
+        isActive: c.isActive,
+      },
+      create: {
+        clientId: c.clientId,
+        name: c.name,
+        clientType: c.clientType,
+        redirectUris: c.redirectUris,
+        allowedScopes: c.allowedScopes,
+        isActive: c.isActive,
+      },
+    });
+  }
+  console.log('✔ Default OAuth clients seeded (Admin Console, CRM, Analytics).');
+
   console.log('Seed completed successfully.');
 }
 

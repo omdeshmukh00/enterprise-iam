@@ -173,7 +173,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Connected Applications (First-party CRM) */}
+      {/* Connected Applications (First-party CRM & Analytics) */}
       <div className="p-6 bg-white rounded-xl border border-slate-200 shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -184,25 +184,48 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="border border-slate-200 rounded-lg p-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
-              CRM
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="border border-slate-200 rounded-lg p-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+                CRM
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">IdentityHub Enterprise CRM</h3>
+                <p className="text-xs text-slate-500">Port 3001 • Customer & Pipeline Management</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-sm font-semibold text-slate-900">IdentityHub Enterprise CRM</h3>
-              <p className="text-xs text-slate-500">Customer Relationship & Pipeline Management</p>
-            </div>
+            <a
+              href="http://localhost:3001"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 border border-slate-300 rounded-md text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition-colors"
+            >
+              <span>Launch CRM</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+            </a>
           </div>
-          <a
-            href="http://localhost:3001"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center space-x-1.5 px-3 py-1.5 border border-slate-300 rounded-md text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition-colors"
-          >
-            <span>Launch CRM</span>
-            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-          </a>
+
+          <div className="border border-slate-200 rounded-lg p-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+                DATA
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">IdentityHub Analytics</h3>
+                <p className="text-xs text-slate-500">Port 3002 • Security Telemetry & Metrics</p>
+              </div>
+            </div>
+            <a
+              href="http://localhost:3002"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 border border-slate-300 rounded-md text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition-colors"
+            >
+              <span>Launch Analytics</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+            </a>
+          </div>
         </div>
       </div>
     </div>

@@ -1,1 +1,23 @@
-{}
+{
+  "40fa53c959ed8bf5c0d9b1fa8c231dc55adb59ceed17e2598d35ce7062f14b10": {
+    "id": "ca1d0e65-5d02-4b7b-995e-9e6696db9e2c",
+    "tokenHash": "40fa53c959ed8bf5c0d9b1fa8c231dc55adb59ceed17e2598d35ce7062f14b10",
+    "user": {
+      "id": "92ce607f-9ad9-4e63-93a4-30954683c7f3",
+      "email": "om@mail.com",
+      "firstName": "Om",
+      "lastName": "",
+      "role": "USER",
+      "status": "ACTIVE",
+      "emailVerified": true,
+      "emailVerifiedAt": "2026-10-15T17:50:37.709Z",
+      "lastLoginAt": "2026-11-24T15:12:23.990Z",
+      "createdAt": "2026-10-15T17:50:37.727Z",
+      "updatedAt": "2026-11-24T15:12:23.992Z"
+    },
+    "createdAt": 1795537042791,
+    "expiresAt": 1796141842791,
+    "lastActiveAt": 1795537042791,
+    "revokedAt": null
+  }
+}
